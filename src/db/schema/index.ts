@@ -94,18 +94,115 @@ export const teamsRelations = relations(teams, ({ one }) => ({
   }),
 }));
 
-// export const plans = sqliteTable("plans", {
-// todo: add plans table schema
-// });
+export const plans = sqliteTable("plans", {
+  // todo: add plans table schema
+  // id
+  // name
+  // price
+  id: integer("id").primaryKey().notNull(),
+  name: text("name").notNull(),
+  price: integer("price").notNull(),
+});
 
-// export const subscriptions = sqliteTable("subscriptions", {
-//   // todo: add subscriptions table schema
-// });
+export const subscriptions = sqliteTable("subscriptions", {
+  // todo: add subscriptions table schema
+  // id
+  // user_id
+  // team_id
+  // plan_id
+  id: integer("id").primaryKey().notNull(),
+  userId: integer("userId")
+    .notNull()
+    .references(() => users.id, { onDelete: "restrict", onUpdate: "restrict" }),
+  teamId: integer("teamId")
+    .notNull()
+    .references(() => teams.id, { onDelete: "restrict", onUpdate: "restrict" }),
+  planId: integer("planId")
+    .notNull()
+    .references(() => plans.id, { onDelete: "restrict", onUpdate: "restrict" }),
+});
 
-// export const orders = sqliteTable("orders", {
-//   // todo: add orders table schema
-// });
+export const subscriptionsRelations = relations(
+  subscriptions,
+  ({ one, many }) => ({
+    user: one(users, {
+      fields: [subscriptions.userId],
+      references: [users.id],
+    }),
+    team: one(teams, {
+      fields: [subscriptions.teamId],
+      references: [teams.id],
+    }),
+    plan: many(plans),
+    order: many(orders),
+    subscriptionActivations: many(subscriptionActivations),
+  })
+);
 
-// export const subscriptionActivations = sqliteTable("subscriptionActivations", {
-//   // todo: add subscriptionActivations table schema
-// });
+export const orders = sqliteTable("orders", {
+  // todo: add orders table schema
+  //// id
+  //// subscription_id
+  //// createdAt
+  //// status
+  id: integer("id").primaryKey().notNull(),
+  subscriptionId: integer("subscriptionId")
+    .notNull()
+    .references(() => subscriptions.id, {
+      onDelete: "restrict",
+      onUpdate: "restrict",
+    }),
+  statusId: integer("statusId")
+    .notNull()
+    .references(() => orderStatus.id, {
+      onDelete: "restrict",
+      onUpdate: "restrict",
+    }),
+  createdAt: timestamp("createdAt").notNull(),
+});
+
+export const ordersRelations = relations(orders, ({ one, many }) => ({
+  subscription: one(subscriptions, {
+    fields: [orders.subscriptionId],
+    references: [subscriptions.id],
+  }),
+  status: many(orderStatus),
+}));
+
+export const subscriptionActivations = sqliteTable("subscriptionActivations", {
+  // todo: add subscriptionActivations table schema
+  // id
+  // subscription_id
+  id: integer("id").primaryKey().notNull(),
+  subscriptionId: integer("subscriptionId")
+    .notNull()
+    .references(() => subscriptions.id, {
+      onDelete: "restrict",
+      onUpdate: "restrict",
+    }),
+  activatedAt: timestamp("activatedAt").notNull(),
+  billingCycle: text("billingCycle").notNull(),
+});
+
+export const subscriptionActivationRelations = relations(
+  subscriptionActivations,
+  ({ one }) => ({
+    subscription: one(subscriptions, {
+      fields: [subscriptionActivations.subscriptionId],
+      references: [subscriptions.id],
+    }),
+  })
+);
+
+export const orderStatus = sqliteTable("orderStatus", {
+  // todo: add orders table schema
+  id: integer("id").primaryKey().notNull(),
+  name: text("name").notNull(),
+});
+
+export const orderStatusRelations = relations(orderStatus, ({ one }) => ({
+  order: one(orders, {
+    fields: [orderStatus.id],
+    references: [orders.id],
+  }),
+}));
