@@ -80,4 +80,21 @@ If you were to introduce two more props to plans:
 How would this affect the current plan upgrade calculation?
 
 ### answer here:
----
+```
+ In case of Default Users :
+    - We charge the user the sum of  price of the new plan + the additional price of the new default users numbers
+    
+    - Example : 30$ cost of switching from starter to premium + 15$ costs of 750 more added users
+2- In case of Price Per User :
+    - The price of single user increase by every plan upgrade.
+    
+    - Example : If the single user costs 0.3$ per month in starter plan it will be costing 0.6$ in premium plan
+```
+
+
+#### SQL Database Diagram
+![image](./db_diagram.png)
+
+#### Subscription Logic Flow
+
+![image](./use_case_flow.png)

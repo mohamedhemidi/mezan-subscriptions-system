@@ -94,6 +94,19 @@ export const teamsRelations = relations(teams, ({ one }) => ({
   }),
 }));
 
+export const orderStatus = sqliteTable("orderStatus", {
+  // todo: add orders table schema
+  id: integer("id").primaryKey().notNull(),
+  name: text("name").notNull(),
+});
+
+export const orderStatusRelations = relations(orderStatus, ({ one }) => ({
+  order: one(orders, {
+    fields: [orderStatus.id],
+    references: [orders.id],
+  }),
+}));
+
 export const plans = sqliteTable("plans", {
   // todo: add plans table schema
   // id
@@ -193,16 +206,3 @@ export const subscriptionActivationRelations = relations(
     }),
   })
 );
-
-export const orderStatus = sqliteTable("orderStatus", {
-  // todo: add orders table schema
-  id: integer("id").primaryKey().notNull(),
-  name: text("name").notNull(),
-});
-
-export const orderStatusRelations = relations(orderStatus, ({ one }) => ({
-  order: one(orders, {
-    fields: [orderStatus.id],
-    references: [orders.id],
-  }),
-}));
